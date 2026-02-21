@@ -1,0 +1,26 @@
+{
+  "_id": "65d6bd8a1234567890abcdef",
+  "trackingCode": "BR-99887766-LOG",
+  "description": "Monitor Ultrawide 34 polegadas",
+  "type": "Eletrônico",
+  "status": "Postado",
+  "specs": {
+    "peso_kg": 8.5,
+    "fragil": true,
+    "dimensoes": "80x40x20"
+  },
+  "history": [
+    {
+      "_id": "1",
+      "status": "Postado",
+      "location": "Agência Central - Origem",
+      "timestamp": "2026-02-21T05:30:00.000Z",
+      
+      "_id": "2",
+      "status": "Em trânsito",
+      "location": "Centro de Distribuição - Rota",
+      "timestamp": "2026-02-21T05:42:13.878Z"
+      
+    }
+  ]
+}
