@@ -1,20 +1,28 @@
 const mongoose = require('mongoose');
 
 const PackageSchema = new mongoose.Schema({
-// Código de rastreio único para cada pacote
-trackingCode: { type: String, required: true, unique: true },
 
+trackingCode: { type: String, required: true, unique: true }, // Código de rastreio único para cada pacote
 description: String,
-
-// Categorias pré-definidas
 type: { type: String, enum: ['Eletrônico', 'Perecível', 'Frágil', 'Comum'] },
-
 status: { type: String, default: 'Postado' },
+
+sender: {
+    name: { type: String, required: true },
+    document: String // Pode ser NIF, CPF ou CNPJ
+},
+
+recipient: {
+    name: { type: String, required: true },
+    address: { type: String, required: true },
+    city: String,
+    state: String,
+    zipCode: String
+},
 
 // O tipo 'Mixed' permite salvar qualquer estrutura JSON aqui dentro.
 specs: mongoose.Schema.Types.Mixed, 
 
-// HISTÓRICO EMBUTIDO:
 history: [{
 status: String,
 location: String,
