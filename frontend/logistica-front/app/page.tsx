@@ -1,34 +1,51 @@
-"use client"; // Esta linha é obrigatória no Next.js para usar useState e interatividade
+"use client";
 
 import { useState } from 'react';
-import mockData from '../mocks/packageMock.json';
 import Timeline from '../components/Timeline';
 
 export default function Home() {
   // 1. Estados da nossa aplicação
-  const [codigoDigitado, setCodigoDigitado] = useState(''); // Guarda o que o usuário digita
-  const [pacoteEncontrado, setPacoteEncontrado] = useState(null); // Guarda os dados do pacote para exibir
-  const [erro, setErro] = useState(''); // Guarda mensagens de erro
+  const [codigoDigitado, setCodigoDigitado] = useState('');
+  const [pacoteEncontrado, setPacoteEncontrado] = useState(null);
+  const [erro, setErro] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  // 2. Função que roda quando o formulário é enviado (clique no botão ou Enter)
-  const handleBuscar = (e) => {
-    e.preventDefault(); // Evita que a página recarregue do zero
+  // 2. Função assíncrona para buscar na API real
+  const handleBuscar = async (e) => {
+    e.preventDefault();
 
-    // Simulando a chamada na API: verificamos se o código bate com o nosso mock
-    if (codigoDigitado === mockData.trackingCode) {
-      setPacoteEncontrado(mockData); // Mostra o pacote na tela
-      setErro(''); // Limpa qualquer erro anterior
-    } else {
-      setPacoteEncontrado(null); // Esconde os dados
-      setErro(`Pacote não encontrado. Dica: teste com o código ${mockData.trackingCode}`);
+    if (!codigoDigitado.trim()) {
+      setErro('Por favor, digite um código de rastreio.');
+      return;
+    }
+
+    setIsLoading(true);
+    setErro('');
+    setPacoteEncontrado(null);
+
+    try {
+      const resposta = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/packages/${codigoDigitado}`);
+
+      if (!resposta.ok) {
+        throw new Error('Pacote não encontrado ou código inválido.');
+      }
+
+      const dadosDoBanco = await resposta.json();
+      setPacoteEncontrado(dadosDoBanco);
+
+    } catch (error) {
+      setErro(error.message || 'Erro ao conectar com o servidor. O backend está rodando?');
+    } finally {
+      setIsLoading(false);
     }
   };
 
+  // 3. A Interface (UM único return para toda a tela)
   return (
     <main className="p-8 font-sans max-w-2xl mx-auto">
       <h1 className="text-3xl font-bold mb-8 text-center text-blue-900">Rastreamento Rápido</h1>
 
-      {/* 3. A Barra de Pesquisa */}
+      {/* A Barra de Pesquisa */}
       <form onSubmit={handleBuscar} className="mb-8 flex gap-3 shadow-sm">
         <input
           type="text"
@@ -39,23 +56,27 @@ export default function Home() {
         />
         <button
           type="submit"
-          className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors font-semibold"
+          disabled={isLoading}
+          className={`px-8 py-3 rounded-lg text-white font-semibold transition-colors ${
+            isLoading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
+          }`}
         >
-          Buscar
+          {isLoading ? 'Buscando...' : 'Buscar'}
         </button>
       </form>
 
-      {/* 4. Feedback de Erro */}
+      {/* Feedback de Erro */}
       {erro && (
         <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-6 rounded-md">
           <p className="text-red-700">{erro}</p>
         </div>
       )}
 
-      {/* 5. Condicional: Só renderiza as informações SE um pacote foi encontrado */}
+      {/* Condicional: Só renderiza as informações SE um pacote foi encontrado */}
       {pacoteEncontrado && (
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
           
+          {/* Card Principal */}
           <div className="bg-gray-50 border border-gray-200 p-5 rounded-lg mb-6 shadow-sm">
             <h2 className="text-2xl font-bold text-gray-800 mb-1">{pacoteEncontrado.description}</h2>
             <div className="flex justify-between items-center mt-3">
@@ -66,6 +87,7 @@ export default function Home() {
             </div>
           </div>
 
+          {/* Especificações Dinâmicas */}
           <h3 className="text-lg font-bold mb-3 text-gray-700">Especificações</h3>
           <ul className="bg-white border border-gray-200 p-5 rounded-lg shadow-sm mb-8 grid grid-cols-2 gap-4">
             {Object.entries(pacoteEncontrado.specs).map(([chave, valor]) => (
@@ -76,6 +98,7 @@ export default function Home() {
             ))}
           </ul>
 
+          {/* Linha do Tempo */}
           <h3 className="text-lg font-bold mb-4 border-b border-gray-200 pb-2 text-gray-700">Histórico de Movimentação</h3>
           <div className="bg-white border border-gray-200 p-5 rounded-lg shadow-sm">
             <Timeline history={pacoteEncontrado.history} />
