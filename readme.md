@@ -101,10 +101,21 @@ Abaixo estão listados os endpoints disponíveis para interagir com o sistema. U
   {
     "description": "Monitor Ultrawide 34 Polegadas",
     "type": "Eletrônico",
+    "sender": {
+        "name": "Distribuidora Tech SA",
+        "document": "12.345.678/0001-99"
+    },
+    "recipient": {
+        "name": "Maria Silva",
+        "address": "Avenida Principal, 1000, Apto 42",
+        "city": "Belo Horizonte",
+        "state": "MG",
+        "zipCode": "30123-456"
+    },
     "specs": {
-      "pesoKg": 7.5,
-      "fragilidade": "Alta",
-      "seguroAtivo": true
+        "pesoKg": 7.5,
+        "fragilidade": "Alta",
+        "seguroAtivo": true
     }
   }
   ```

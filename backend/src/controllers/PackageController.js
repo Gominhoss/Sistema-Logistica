@@ -6,7 +6,7 @@ module.exports = {
 async create(req, res) {
     try {
         //Pega os dados que o usuário enviou no corpo da requisição (req.body)
-        const {description, type, specs } = req.body;
+        const {description, type, sender, recipient, specs } = req.body;
 
         // Gera um código de rastreio único (ex: BR-1A2B3C)
         const generatedCode = 'BR-' + crypto.randomBytes(3).toString('hex').toUpperCase();
@@ -15,9 +15,9 @@ async create(req, res) {
             trackingCode: generatedCode,
             description,
             type,
-            // 'specs' pode ser qualquer coisa
-            // Se for eletrônico, pode ter voltagem. Se for perecível, temperatura.
-            specs, 
+            sender,
+            recipient,
+            specs,  // 'specs' pode ser qualquer coisa. Se for eletrônico, pode ter voltagem. Se for perecível, temperatura.
             history: [{
                 status: 'Postado',
                 location: 'Agência Central - Origem'
@@ -60,7 +60,7 @@ try {
     return res.status(404).json({ error: 'Pacote não encontrado. Verifique o código de rastreio.' });
     }
     return res.status(200).json(packageData);
-    
+
 } catch (error) {
     return res.status(500).json({ error: 'Erro interno ao buscar o pacote' });
 }
