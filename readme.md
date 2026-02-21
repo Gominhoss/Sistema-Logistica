@@ -29,17 +29,70 @@ O **LogiTrack** utiliza uma arquitetura **NoSQL Orientada a Documentos** (MongoD
 * **Linguagem:** Node.js
 * **Ferramentas:** 
 
-## 📋 Como executar (Em breve)
+---
 
-> Este projeto está em fase inicial de desenvolvimento.
+## 📋 Como executar
+
+### 1. Pré-requisitos
+
+Antes de começar, você precisará ter instalado em sua máquina:
+
+* **Node.js** (versão LTS recomendada)
+* **MongoDB Community Server** (ou uma conta no MongoDB Atlas)
+* **MongoDB Compass** (para visualização dos dados)
+
+### 2. Instalação e Configuração
 
 1. Clone o repositório:
 ```bash
-git clone https://github.com/ ...
-(será adicionado depois)
+git clone https://github.com/Gominhoss/Sistema-Logistica.git
+cd Sistema-Logistica
 
 ```
 
 
+2. Configure o Backend:
+```bash
+cd backend
+npm install
+
+```
+
+
+3. Configure as variáveis de ambiente:
+* Crie um arquivo `.env` dentro da pasta `backend/`.
+* Adicione a sua string de conexão e a porta (exemplo):
+```env
+PORT=3000
+MONGODB_URI=mongodb://localhost:27017/logistica_db
+
+```
+
+
+
+
+
+### 3. Execução do Servidor
+
+Ainda dentro da pasta `backend/`, você pode rodar o projeto de duas formas:
+
+* **Modo Desenvolvimento (com auto-reload):**
+```bash
+npm run dev
+
+```
+
+
+* **Modo Produção:**
+```bash
+npm start
+
+```
+
+
+
+O servidor estará rodando em `http://localhost:3000`. Você poderá visualizar a conexão bem-sucedida com o banco no log do terminal.
+
+---
 Desenvolvido por Vitor Gomes, Rian Vaz e Luiz Gustavo - 2026
 
