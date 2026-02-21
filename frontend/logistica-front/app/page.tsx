@@ -51,26 +51,29 @@ export default function Home() {
 
   // 3. A Interface (UM único return para toda a tela)
   return (
-    <main className="p-8 font-sans max-w-2xl mx-auto">
-      <h1 className="text-3xl font-bold mb-8 text-center text-blue-900">Rastreamento Rápido</h1>
+    <main className="max-w-2xl mx-auto px-4">
+      <div className="text-center mb-10">
+        <h1 className="text-3xl font-extrabold text-blue-900 mb-2">Rastreamento Rápido</h1>
+        <p className="text-gray-500">Acompanhe o status da sua entrega em tempo real</p>
+      </div>
 
       {/* A Barra de Pesquisa */}
-      <form onSubmit={handleBuscar} className="mb-8 flex gap-3 shadow-sm">
+      <form onSubmit={handleBuscar} className="mb-10 flex gap-3 shadow-2xl p-2 bg-white rounded-2xl border border-gray-100">
         <input
           type="text"
-          placeholder="Digite o código de rastreio (ex: BR-99887766-LOG)"
+          placeholder="Digite o código de rastreio (ex: BR-1A2B3C)"
           value={codigoDigitado}
           onChange={(e) => setCodigoDigitado(e.target.value)}
-          className="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+          className="flex-1 p-4 border-none focus:ring-0 focus:outline-none text-lg"
         />
         <button
           type="submit"
           disabled={isLoading}
-          className={`px-8 py-3 rounded-lg text-white font-semibold transition-colors ${
+          className={`px-10 py-4 rounded-xl text-white font-bold transition-all shadow-md active:scale-95 ${
             isLoading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
           }`}
         >
-          {isLoading ? 'Buscando...' : 'Buscar'}
+          {isLoading ? '...' : 'Buscar'}
         </button>
       </form>
 
@@ -109,12 +112,18 @@ export default function Home() {
           {/* Especificações Dinâmicas */}
           <h3 className="text-lg font-bold mb-3 text-gray-700">Especificações</h3>
           <ul className="bg-white border border-gray-200 p-5 rounded-lg shadow-sm mb-8 grid grid-cols-2 gap-4">
-            {Object.entries(pacoteEncontrado.specs).map(([chave, valor]) => (
-              <li key={chave} className="flex flex-col">
-                <span className="text-xs uppercase tracking-wider text-gray-500 font-semibold">{chave.replace('_', ' ')}</span> 
-                <span className="text-gray-800 font-medium">{String(valor)}</span>
+            {pacoteEncontrado.specs && Object.entries(pacoteEncontrado.specs).length > 0 ? (
+              Object.entries(pacoteEncontrado.specs).map(([chave, valor]) => (
+                <li key={chave} className="flex flex-col">
+                  <span className="text-xs uppercase tracking-wider text-gray-500 font-semibold">{chave.replace('_', ' ')}</span> 
+                  <span className="text-gray-800 font-medium">{String(valor)}</span>
+                </li>
+              ))
+            ) : (
+              <li className="col-span-2 text-gray-400 italic text-sm text-center py-4">
+                Nenhuma especificação técnica informada.
               </li>
-            ))}
+            )}
           </ul>
 
           {/* Linha do Tempo */}
