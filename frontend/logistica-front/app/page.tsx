@@ -40,6 +40,15 @@ export default function Home() {
     }
   };
 
+  // Função auxiliar para renderizar campos que podem ser objetos (como Remetente/Destinatário)
+  const formatarEntidade = (entidade) => {
+    if (!entidade) return 'Não informado';
+    if (typeof entidade === 'object') {
+      return entidade.name || entidade.nome || 'Nome não informado';
+    }
+    return entidade;
+  };
+
   // 3. A Interface (UM único return para toda a tela)
   return (
     <main className="p-8 font-sans max-w-2xl mx-auto">
@@ -79,7 +88,17 @@ export default function Home() {
           {/* Card Principal */}
           <div className="bg-gray-50 border border-gray-200 p-5 rounded-lg mb-6 shadow-sm">
             <h2 className="text-2xl font-bold text-gray-800 mb-1">{pacoteEncontrado.description}</h2>
-            <div className="flex justify-between items-center mt-3">
+            <div className="grid grid-cols-2 gap-4 mt-4">
+              <div>
+                <p className="text-xs uppercase tracking-wider text-gray-500 font-semibold">Remetente</p>
+                <p className="text-gray-800 font-medium">{formatarEntidade(pacoteEncontrado.sender)}</p>
+              </div>
+              <div>
+                <p className="text-xs uppercase tracking-wider text-gray-500 font-semibold">Destinatário</p>
+                <p className="text-gray-800 font-medium">{formatarEntidade(pacoteEncontrado.recipient)}</p>
+              </div>
+            </div>
+            <div className="flex justify-between items-center mt-6 pt-4 border-t border-gray-200">
               <p className="text-gray-600">Categoria: <span className="font-medium text-gray-800">{pacoteEncontrado.type}</span></p>
               <p className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-bold">
                 {pacoteEncontrado.status}
