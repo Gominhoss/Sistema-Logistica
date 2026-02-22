@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import Timeline from '../components/Timeline';
 
 interface Entidade {
@@ -136,10 +137,10 @@ export default function Home() {
   };
 
   return (
-    <main className="max-w-2xl mx-auto px-4">
+    <main className="max-w-2xl mx-auto px-4 py-4">
       <div className="text-center mb-10">
-        <h1 className="text-3xl font-extrabold text-blue-900 mb-2">Rastreamento Rápido</h1>
-        <p className="text-gray-500">Acompanhe o status da sua entrega em tempo real</p>
+        <h1 className="text-4xl font-extrabold text-blue-900 mb-2">📦 Rastreamento</h1>
+        <p className="text-gray-500 text-lg">Acompanhe e atualize sua entrega em tempo real</p>
       </div>
 
       <form onSubmit={handleBuscar} className="mb-10 flex gap-3 shadow-2xl p-2 bg-white rounded-2xl border border-gray-100">
