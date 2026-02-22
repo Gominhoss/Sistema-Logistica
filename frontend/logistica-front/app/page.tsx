@@ -10,6 +10,11 @@ export default function Home() {
   const [erro, setErro] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
+  // Estados para o formulário de atualização
+  const [novoStatus, setNovoStatus] = useState('');
+  const [novaLocalizacao, setNovaLocalizacao] = useState('');
+  const [isUpdating, setIsUpdating] = useState(false);
+
   // 2. Função assíncrona para buscar na API real
   const handleBuscar = async (e) => {
     e.preventDefault();
@@ -37,6 +42,45 @@ export default function Home() {
       setErro(error.message || 'Erro ao conectar com o servidor. O backend está rodando?');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleAtualizarStatus = async (e) => {
+    e.preventDefault();
+
+    if (!novoStatus || !novaLocalizacao) {
+      alert('Por favor, preencha o novo status e a localização.');
+      return;
+    }
+
+    setIsUpdating(true);
+
+    try {
+      const resposta = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/packages/${pacoteEncontrado.trackingCode}/status`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          status: novoStatus,
+          location: novaLocalizacao,
+        }),
+      });
+
+      if (!resposta.ok) {
+        throw new Error('Erro ao atualizar o status do pacote.');
+      }
+
+      const pacoteAtualizado = await resposta.json();
+      setPacoteEncontrado(pacoteAtualizado);
+      setNovoStatus('');
+      setNovaLocalizacao('');
+      alert('Status atualizado com sucesso!');
+
+    } catch (error) {
+      alert(error.message);
+    } finally {
+      setIsUpdating(false);
     }
   };
 
@@ -125,6 +169,54 @@ export default function Home() {
               </li>
             )}
           </ul>
+
+          {/* Formulário de Atualização de Status */}
+          <div className="bg-blue-50 border border-blue-200 p-6 rounded-lg mb-8 shadow-sm">
+            <h3 className="text-xl font-bold text-blue-900 mb-4 flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>
+              Atualizar Status do Pacote
+            </h3>
+            <form onSubmit={handleAtualizarStatus} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="flex flex-col">
+                <label className="text-xs font-semibold text-blue-800 uppercase mb-1">Novo Status</label>
+                <select
+                  value={novoStatus}
+                  onChange={(e) => setNovoStatus(e.target.value)}
+                  className="p-3 rounded-lg border border-blue-200 focus:ring-2 focus:ring-blue-400 outline-none text-gray-800 bg-white"
+                  required
+                >
+                  <option value="">Selecione...</option>
+                  <option value="Em trânsito">Em trânsito</option>
+                  <option value="Saiu para entrega">Saiu para entrega</option>
+                  <option value="Entregue">Entregue</option>
+                  <option value="Aguardando retirada">Aguardando retirada</option>
+                  <option value="Retornou ao remetente">Retornou ao remetente</option>
+                </select>
+              </div>
+              <div className="flex flex-col">
+                <label className="text-xs font-semibold text-blue-800 uppercase mb-1">Localização Atual</label>
+                <input
+                  type="text"
+                  placeholder="Ex: CD São Paulo - SP"
+                  value={novaLocalizacao}
+                  onChange={(e) => setNovaLocalizacao(e.target.value)}
+                  className="p-3 rounded-lg border border-blue-200 focus:ring-2 focus:ring-blue-400 outline-none text-gray-800"
+                  required
+                />
+              </div>
+              <div className="md:col-span-2 flex justify-end mt-2">
+                <button
+                  type="submit"
+                  disabled={isUpdating}
+                  className={`px-8 py-3 rounded-xl text-white font-bold transition-all shadow-md active:scale-95 ${
+                    isUpdating ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
+                  }`}
+                >
+                  {isUpdating ? 'Atualizando...' : 'Confirmar Atualização'}
+                </button>
+              </div>
+            </form>
+          </div>
 
           {/* Linha do Tempo */}
           <h3 className="text-lg font-bold mb-4 border-b border-gray-200 pb-2 text-gray-700">Histórico de Movimentação</h3>
