@@ -1,6 +1,6 @@
 require('dotenv').config(); // Carrega as variáveis do arquivo .env logo no início
 const app = require('./src/app'); // Importa o app que configuramos acima
-const connectDB = require('./src/config/database'); // Importa a lógica de conexão com o banco
+const { connectDB } = require('./src/config/database'); // Importa a lógica de conexão com o banco
 
 const PORT = process.env.PORT || 3000;
 
