@@ -1,4 +1,4 @@
-# 📦 LogiTrack NoSQL: Monitoramento em Tempo Real
+# 📦 LogiPackages NoSQL: Monitoramento em Tempo Real
 
 Um sistema de monitoramento logístico de alta performance focado na flexibilidade de dados, utilizando o poder de bancos de dados orientados a documentos para gerenciar cargas heterogêneas.
 
@@ -12,11 +12,12 @@ Empresas de logística enfrentam um desafio clássico: **a variedade de dados.**
 
 ## 💡 A Solução
 
-O **LogiTrack** utiliza uma arquitetura **NoSQL Orientada a Documentos** (MongoDB). Cada rastreio é tratado como um objeto independente, permitindo que cada pacote carregue seus próprios atributos específicos sem comprometer a estrutura do banco.
+O **LogiPackages** utiliza uma arquitetura **NoSQL Orientada a Documentos** (MongoDB). Cada rastreio é tratado como um objeto independente, permitindo que cada pacote carregue seus próprios atributos específicos sem comprometer a estrutura do banco.
 
 ### Por que NoSQL neste projeto?
 
 * **Esquema Flexível (Schemaless):** Adicionamos novos tipos de produtos e metadados instantaneamente (`specs`), sem a necessidade de migrações complexas (`ALTER TABLE`).
+* **Documentos Embutidos (Embedded Documents):** Dados do remetente e destinatário são salvos como subdocumentos dentro do próprio pacote, eliminando a necessidade de tabelas separadas de "Clientes" ou "Endereços" e acelerando a leitura.
 * **Histórico Embutido:** O rastreamento de status é salvo dentro do próprio documento do pacote (arrays embutidos), eliminando a necessidade de `JOINs` pesados.
 * **Alta Performance de Escrita:** Otimizado para o fluxo constante de atualizações de status.
 
@@ -30,7 +31,7 @@ O **LogiTrack** utiliza uma arquitetura **NoSQL Orientada a Documentos** (MongoD
 
 **Banco de Dados:**
 * MongoDB (Armazenamento NoSQL)
-* Mongoose (ODM para modelagem dos dados)
+* **mongodb** (Driver Nativo Oficial)
 
 **Ferramentas Auxiliares:**
 * **dotenv**: Gerenciamento de variáveis de ambiente.
@@ -94,7 +95,7 @@ Abaixo estão listados os endpoints disponíveis para interagir com o sistema. U
 
 ### 1. Cadastrar Novo Pacote
 * **Rota:** `POST /packages`
-* **Descrição:** Cria um novo registro logístico. O código de rastreio (`trackingCode`) é gerado automaticamente pelo sistema. O campo `specs` é flexível (NoSQL).
+* **Descrição:** Cria um novo registro logístico. O código de rastreio (`trackingCode`) é gerado automaticamente pelo sistema. O campo `specs` é flexível (NoSQL) e os dados de `sender` e `recipient` são subdocumentos embutidos.
 * **Corpo da Requisição (JSON):**
 
   ```json
@@ -122,7 +123,7 @@ Abaixo estão listados os endpoints disponíveis para interagir com o sistema. U
 
 ### 2. Listar Todos os Pacotes
 * **Rota:** `GET /packages`
-* **Descrição:** Retorna um array com todos os pacotes cadastrados no banco de dados, incluindo seus históricos de movimentação.
+* **Descrição:** Retorna um array com todos os pacotes cadastrados no banco de dados, incluindo detalhes de remetente, destinatário e seus históricos de movimentação.
 
 ### 3. Buscar Pacote Específico (getOne)
 * **Rota:** `GET /packages/:trackingCode`
@@ -131,7 +132,7 @@ Abaixo estão listados os endpoints disponíveis para interagir com o sistema. U
 
 ### 4. Atualizar Status e Histórico
 * **Rota:** `PATCH /packages/:trackingCode/status`
-* **Descrição:** Atualiza o status atual da encomenda e injeta automaticamente (via operador `$push` do MongoDB) o novo evento de movimentação dentro do array de histórico do documento.
+* **Descrição:** Atualiza o status atual da encomenda e injeta automaticamente (via operador nativo `$push` do MongoDB) o novo evento de movimentação dentro do array de histórico do documento.
 * **Corpo da Requisição (JSON):**
 
   ```json
