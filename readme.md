@@ -1,146 +1,88 @@
-# 📦 LogiPackages NoSQL: Monitoramento em Tempo Real
+# 📦 Logística Express: Monitoramento NoSQL em Tempo Real
 
-Um sistema de monitoramento logístico de alta performance focado na flexibilidade de dados, utilizando o poder de bancos de dados orientados a documentos para gerenciar cargas heterogêneas.
+Um sistema completo de gestão e rastreamento logístico de alta performance, focado na flexibilidade de dados e agilidade operacional. O projeto utiliza uma arquitetura moderna com **Next.js** no Frontend e **Node.js com MongoDB** no Backend.
 
-## 🚀 O Problema
+## 🚀 O Problema e o Cenário
 
-Empresas de logística enfrentam um desafio clássico: **a variedade de dados.** Tentar rastrear um pacote de eletrônicos (voltagem, garantia), uma carga perecível (temperatura, validade) e um móvel (peso, dimensões) em um banco SQL tradicional resulta em:
+Empresas de logística enfrentam um desafio clássico: **a heterogeneidade dos dados.** Tentar rastrear produtos de naturezas completamente diferentes em um banco de dados relacional (SQL) tradicional gera problemas graves:
 
-* Inúmeras colunas nulas.
-* Tabelas de "detalhes" extremamente complexas.
-* Dificuldade de escala em cenários de alto volume de escrita.
+*   **Esquemas Rígidos:** Um pacote de eletrônicos precisa de campos como "voltagem" e "garantia". Uma carga perecível precisa de "temperatura" e "validade". Um móvel precisa de "dimensões" e "peso".
+*   **Colunas Nulas:** No SQL, isso resultaria em tabelas com dezenas de colunas vazias para a maioria dos registros ou tabelas de "detalhes" extremamente lentas com muitos `JOINs`.
+*   **Evolução Lenta:** Adicionar um novo tipo de mercadoria exigiria alterações estruturais no banco (`ALTER TABLE`), causando downtime e riscos.
 
-## 💡 A Solução
+## 💡 A Solução: Por que NoSQL (MongoDB)?
 
-O **LogiPackages** utiliza uma arquitetura **NoSQL Orientada a Documentos** (MongoDB). Cada rastreio é tratado como um objeto independente, permitindo que cada pacote carregue seus próprios atributos específicos sem comprometer a estrutura do banco.
+O **Logística Express** foi construído sobre um banco **NoSQL Orientado a Documentos** para garantir:
 
-### Por que NoSQL neste projeto?
-
-* **Esquema Flexível (Schemaless):** Adicionamos novos tipos de produtos e metadados instantaneamente (`specs`), sem a necessidade de migrações complexas (`ALTER TABLE`).
-* **Documentos Embutidos (Embedded Documents):** Dados do remetente e destinatário são salvos como subdocumentos dentro do próprio pacote, eliminando a necessidade de tabelas separadas de "Clientes" ou "Endereços" e acelerando a leitura.
-* **Histórico Embutido:** O rastreamento de status é salvo dentro do próprio documento do pacote (arrays embutidos), eliminando a necessidade de `JOINs` pesados.
-* **Alta Performance de Escrita:** Otimizado para o fluxo constante de atualizações de status.
+1.  **Esquema Flexível (Schemaless):** O campo `specs` (especificações) de cada pacote é dinâmico. Podemos salvar qualquer par de chave-valor para diferentes tipos de produtos sem mudar uma linha de código no banco.
+2.  **Documentos Embutidos:** Informações de remetente, destinatário e o histórico completo de movimentações são salvos dentro de um único documento. Isso elimina a necessidade de `JOINs` complexos, tornando a leitura de um pacote instantânea.
+3.  **Performance de Escrita:** O uso do operador `$push` do MongoDB permite adicionar novos eventos ao histórico de um pacote de forma atômica e extremamente rápida, ideal para sistemas com milhares de atualizações por segundo.
+4.  **Escalabilidade:** Pronto para lidar com grandes volumes de dados típicos de operações logísticas globais.
 
 ---
 
-## 🛠️ Tecnologias e Dependências
+## 🛠️ Tecnologias Utilizadas
 
-**Linguagem & Ambiente:**
-* Node.js
-* Express.js (Framework Web)
+### **Frontend**
+*   **Framework:** Next.js 14+ (App Router)
+*   **Linguagem:** TypeScript
+*   **Estilização:** Tailwind CSS (Moderno, Responsivo e Limpo)
+*   **Componentes:** React Hooks (useState, useEffect) para gestão de estado em tempo real.
 
-**Banco de Dados:**
-* MongoDB (Armazenamento NoSQL)
-* **mongodb** (Driver Nativo Oficial)
-
-**Ferramentas Auxiliares:**
-* **dotenv**: Gerenciamento de variáveis de ambiente.
-* **cors**: Permissão de acesso para integrações com o Frontend.
-* **crypto**: (Nativo do Node) Para geração automática de códigos de rastreio únicos.
-* **nodemon**: (Dependência de Desenvolvimento) Auto-reload do servidor.
+### **Backend**
+*   **Ambiente:** Node.js
+*   **Framework:** Express.js
+*   **Banco de Dados:** MongoDB (Driver Nativo)
+*   **Segurança/CORS:** Middleware `cors` para integração segura com o frontend.
 
 ---
 
-## 📋 Como executar
+## 📋 Funcionalidades Principais
+
+1.  **🔎 Rastreamento Inteligente:** Busca instantânea por código de rastreio com visualização de Timeline dinâmica.
+2.  **🔄 Atualização de Status:** Interface simplificada para atualizar a localização e o status do pacote, com atualização imediata do histórico.
+3.  **📊 Gestão de Pacotes:** Aba dedicada ("Todos Pacotes") com visual em Grid de Cards para visualizar toda a operação.
+4.  **📄 Detalhes Expandidos:** Uso de Modais para exibir especificações técnicas e históricos sem poluir a visão principal.
+5.  **📝 Cadastro Dinâmico:** Rota para criação de pacotes com geração automática de códigos únicos (Padrão BR-XXXXXX).
+
+---
+
+## ⚙️ Como Executar o Projeto
 
 ### 1. Pré-requisitos
+*   Node.js instalado.
+*   MongoDB rodando localmente ou via Atlas.
 
-Antes de começar, você precisará ter instalado em sua máquina:
-* **Node.js** (versão LTS recomendada)
-* **MongoDB Community Server** (ou uma conta no MongoDB Atlas)
-* **MongoDB Compass** (para visualização dos dados)
+### 2. Configuração do Backend
+1.  Acesse a pasta `backend/`.
+2.  Instale as dependências: `npm install`.
+3.  Crie um arquivo `.env`:
+    ```env
+    PORT=3000
+    MONGODB_URI=mongodb://localhost:27017/logistica_db
+    ```
+4.  Inicie o servidor: `npm run dev`.
 
-### 2. Instalação e Configuração
-
-1. Clone o repositório:
-   ```bash
-   git clone https://github.com/Gominhoss/Sistema-Logistica.git
-   cd Sistema-Logistica
-   ```
-
-2. Acesse a pasta do backend e instale as dependências:
-   ```bash
-   cd backend
-   npm install
-   ```
-
-3. Configure as variáveis de ambiente:
-   * Crie um arquivo `.env` dentro da pasta `backend/`.
-   * Adicione a sua string de conexão e a porta (exemplo):
-   ```env
-   PORT=3000
-   MONGODB_URI=mongodb://localhost:27017/logistica_db
-   ```
-
-### 3. Execução do Servidor
-
-Ainda dentro da pasta `backend/`, inicie a aplicação:
-
-* **Modo Desenvolvimento (com auto-reload):**
-  ```bash
-  npm run dev
-  ```
-* **Modo Produção:**
-  ```bash
-  npm start
-  ```
-
-O servidor estará rodando em `http://localhost:3000`. Você verá no terminal a confirmação da conexão com o banco de dados.
+### 3. Configuração do Frontend
+1.  Acesse a pasta `frontend/logistica-front/`.
+2.  Instale as dependências: `npm install`.
+3.  Crie um arquivo `.env.local`:
+    ```env
+    NEXT_PUBLIC_API_URL=http://localhost:3000
+    ```
+4.  Inicie a aplicação: `npm run dev`.
+5.  Acesse: `http://localhost:5000`.
 
 ---
 
-## ⚙️ Backend: Documentação da API
+## 🔌 Documentação da API (Principais Rotas)
 
-Abaixo estão listados os endpoints disponíveis para interagir com o sistema. Utilize ferramentas como **Postman** ou **Insomnia** para realizar os testes.
-
-### 1. Cadastrar Novo Pacote
-* **Rota:** `POST /packages`
-* **Descrição:** Cria um novo registro logístico. O código de rastreio (`trackingCode`) é gerado automaticamente pelo sistema. O campo `specs` é flexível (NoSQL) e os dados de `sender` e `recipient` são subdocumentos embutidos.
-* **Corpo da Requisição (JSON):**
-
-  ```json
-  {
-    "description": "Monitor Ultrawide 34 Polegadas",
-    "type": "Eletrônico",
-    "sender": {
-        "name": "Distribuidora Tech SA",
-        "document": "12.345.678/0001-99"
-    },
-    "recipient": {
-        "name": "Maria Silva",
-        "address": "Avenida Principal, 1000, Apto 42",
-        "city": "Belo Horizonte",
-        "state": "MG",
-        "zipCode": "30123-456"
-    },
-    "specs": {
-        "pesoKg": 7.5,
-        "fragilidade": "Alta",
-        "seguroAtivo": true
-    }
-  }
-  ```
-
-### 2. Listar Todos os Pacotes
-* **Rota:** `GET /packages`
-* **Descrição:** Retorna um array com todos os pacotes cadastrados no banco de dados, incluindo detalhes de remetente, destinatário e seus históricos de movimentação.
-
-### 3. Buscar Pacote Específico (getOne)
-* **Rota:** `GET /packages/:trackingCode`
-* **Descrição:** Retorna os detalhes completos e o histórico de um único pacote utilizando o seu código de rastreio.
-* **Exemplo de URL:** `GET /packages/BR-A1B2C3`
-
-### 4. Atualizar Status e Histórico
-* **Rota:** `PATCH /packages/:trackingCode/status`
-* **Descrição:** Atualiza o status atual da encomenda e injeta automaticamente (via operador nativo `$push` do MongoDB) o novo evento de movimentação dentro do array de histórico do documento.
-* **Corpo da Requisição (JSON):**
-
-  ```json
-  {
-    "status": "Em Trânsito",
-    "location": "Centro de Distribuição - Filial Sudeste"
-  }
-  ```
+*   `POST /packages`: Cadastra um novo pacote.
+*   `GET /packages`: Lista todos os pacotes do sistema.
+*   `GET /packages/:trackingCode`: Busca detalhes de um pacote específico.
+*   `PATCH /packages/:trackingCode/status`: Atualiza status e insere novo evento no histórico.
 
 ---
-Desenvolvido por Vitor Gomes, Rian Vaz e Luiz Gustavo - 2026
+**Projeto desenvolvido para demonstrar o poder do NoSQL em cenários de dados heterogêneos e alta performance.**
+
+*Desenvolvido por Vitor Gomes, Rian Vaz e Luís Gustavo - 2026*"
